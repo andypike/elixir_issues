@@ -44,6 +44,7 @@ defmodule Issues.CLI do
     |> convert_to_list_of_maps
     |> sort_into_ascending_order
     |> Enum.take(count)
+    |> render_table
   end
 
   def decode_response({:ok, body}), do: body
@@ -60,5 +61,29 @@ defmodule Issues.CLI do
 
   def sort_into_ascending_order(list_of_issues) do
     Enum.sort(list_of_issues, fn i1, i2 -> i1["created_at"] <= i2["created_at"] end)
+  end
+
+  def render_table(list_of_issues) do
+    render_table_headers
+    render_issues(list_of_issues)
+  end
+
+  def render_table_headers do
+    IO.puts " #  | created_at           | title                                   "
+    IO.puts "---------------------------------------------------------------------"
+  end
+
+  def render_issues([]) do
+    IO.puts "---------------------------------------------------------------------"
+  end
+
+  def render_issues([head | tail]) do
+    id         = head["id"]
+    created_at = head["created_at"]
+    title      = head["title"]
+
+    IO.puts "#{id} | #{created_at} | #{title}"
+
+    render_issues(tail)
   end
 end
