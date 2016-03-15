@@ -65,25 +65,33 @@ defmodule Issues.CLI do
 
   def render_table(list_of_issues) do
     render_table_headers
+    render_line
     render_issues(list_of_issues)
+    render_line
   end
 
   def render_table_headers do
-    IO.puts " #  | created_at           | title                                   "
-    IO.puts "---------------------------------------------------------------------"
+    IO.puts " #        | created_at           | title"
   end
 
-  def render_issues([]) do
-    IO.puts "---------------------------------------------------------------------"
+  def render_line do
+    IO.puts String.duplicate("-", 60)
   end
 
-  def render_issues([head | tail]) do
-    id         = head["id"]
-    created_at = head["created_at"]
-    title      = head["title"]
+  def render_issues([]), do: ""
+  def render_issues([issue | tail]) do
+    id         = format_id(issue)
+    created_at = issue["created_at"]
+    title      = issue["title"]
 
     IO.puts "#{id} | #{created_at} | #{title}"
 
     render_issues(tail)
+  end
+
+  def format_id(issue) do
+    issue["id"]
+    |> Integer.to_string
+    |> String.rjust(9)
   end
 end
