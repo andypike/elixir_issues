@@ -44,7 +44,7 @@ defmodule Issues.CLI do
     |> convert_to_list_of_maps
     |> sort_into_ascending_order
     |> Enum.take(count)
-    |> render_table
+    |> Table.render
   end
 
   def decode_response({:ok, body}), do: body
@@ -61,37 +61,5 @@ defmodule Issues.CLI do
 
   def sort_into_ascending_order(list_of_issues) do
     Enum.sort(list_of_issues, fn i1, i2 -> i1["created_at"] <= i2["created_at"] end)
-  end
-
-  def render_table(list_of_issues) do
-    render_table_headers
-    render_line
-    render_issues(list_of_issues)
-    render_line
-  end
-
-  def render_table_headers do
-    IO.puts " #        | created_at           | title"
-  end
-
-  def render_line do
-    IO.puts String.duplicate("-", 60)
-  end
-
-  def render_issues([]), do: ""
-  def render_issues([issue | tail]) do
-    id         = format_id(issue)
-    created_at = issue["created_at"]
-    title      = issue["title"]
-
-    IO.puts "#{id} | #{created_at} | #{title}"
-
-    render_issues(tail)
-  end
-
-  def format_id(issue) do
-    issue["id"]
-    |> Integer.to_string
-    |> String.rjust(9)
   end
 end
